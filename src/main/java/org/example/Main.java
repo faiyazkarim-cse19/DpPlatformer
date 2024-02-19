@@ -31,8 +31,9 @@ public class Main extends PApplet {
     static ArrayList<Sprite> coins;
     static Enemy enemy;
     int num_coins;
-    float view_x = 0;
-    float view_y = 0;
+    float view_x;
+    float view_y;
+    boolean isGameOver;
 
     public void settings(){
         size(800, 600);
@@ -44,6 +45,10 @@ public class Main extends PApplet {
         player = new Player(this, player_image, 0.8f);
         player.setBottom(GROUND_LEVEL);
         player.center_x = 100;
+        num_coins = 0;
+        view_x = 0.0f;
+        view_y = 0.0f;
+        isGameOver = false;
         platforms = new ArrayList<>();
         coins = new ArrayList<>();
 
@@ -54,6 +59,43 @@ public class Main extends PApplet {
         crate = loadImage("images/crate.png");
         snow = loadImage("images/snow.png");
         createPlatforms();
+    }
+
+    public void draw() {
+        background(255);
+        scroll();
+        player.display();
+        player.updateAnimation();
+        resolvePlatformCollisions(player, platforms);
+        for(Sprite s: platforms)
+            s.display();
+
+        for(Sprite c: coins){
+            c.display();
+            ((AnimatedSprite)c).updateAnimation();
+        }
+
+        enemy.display();
+        enemy.update();
+        enemy.updateAnimation();
+
+        fill(0, 0, 0);
+        textSize(32);
+        text("Coin: " + num_coins, view_x + 50, view_y + 50);
+        text("Lives: " + player.lives, view_x + 50, view_y + 100);
+
+        collectCoins();
+        checkDeath();
+
+        if(isGameOver){
+            fill(0, 0, 0);
+            text("Game over!", view_x + (float)width/2 - 100, view_y + (float)height/2);
+            if(player.lives == 0)
+                text("You are dead!", view_x + (float)width/2 - 100, view_y + (float)height/2 + 50);
+            else
+                text("You win!", view_x + (float)width/2 - 100, view_y + (float)height/2 + 50);
+            text("Press Enter to restart!", view_x + (float)width/2 - 100, view_y + (float)height/2 + 100);
+        }
     }
 
     void createPlatforms(){
@@ -137,7 +179,6 @@ public class Main extends PApplet {
             s.change_x = 0;
         }
 
-
     }
     
     public static boolean isOnPlatforms(Sprite s, ArrayList<Sprite> walls){
@@ -164,24 +205,38 @@ public class Main extends PApplet {
         return collision_list;
     }
 
-    public void draw() {
-        background(255);
-        scroll();
-        player.display();
-        player.updateAnimation();
-        resolvePlatformCollisions(player, platforms);
-        for(Sprite s: platforms)
-            s.display();
-
-        for(Sprite c: coins){
-            c.display();
-            ((AnimatedSprite)c).updateAnimation();
+    public void collectCoins(){
+        ArrayList<Sprite> coin_list = checkCollisionList(player, coins);
+        if(!coin_list.isEmpty()){
+            for(Sprite coin: coin_list){
+                num_coins++;
+                coins.remove(coin);
+            }
         }
 
-        enemy.display();
-        enemy.update();
-        enemy.updateAnimation();
+        if(coins.isEmpty()){
+            isGameOver = true;
+        }
     }
+
+    public void checkDeath() {
+        boolean collision_death = checkCollision(player, enemy);
+        boolean cliff_death = player.getBottom() > GROUND_LEVEL;
+
+        if (collision_death || cliff_death) {
+            player.lives -= 1;
+            if (player.lives <= 0) {
+                player.lives = 0;
+                isGameOver = true;
+            }
+            else
+            {
+                player.center_x = 100;
+                player.setBottom(GROUND_LEVEL);
+            }
+        }
+    }
+
 
     public void scroll(){
         float right_boundary = view_x + width - RIGHT_MARGIN;
@@ -208,20 +263,27 @@ public class Main extends PApplet {
     }
 
     public void keyPressed(){
-        if(keyCode == RIGHT){
-            player.change_x = MOVE_SPEED;
+        if(!isGameOver){
+            if(keyCode == RIGHT){
+                player.change_x = MOVE_SPEED;
+            }
+            else if(keyCode == LEFT){
+                player.change_x = -MOVE_SPEED;
+            }
+            else if(keyCode == UP){
+                player.change_y = -MOVE_SPEED;
+            }
+            else if(keyCode == DOWN){
+                player.change_y = MOVE_SPEED;
+            }
+            else if(key == 'a' && isOnPlatforms(player, platforms)){
+                player.change_y = -JUMP_SPEED;
+            }
         }
-        else if(keyCode == LEFT){
-            player.change_x = -MOVE_SPEED;
-        }
-        else if(keyCode == UP){
-            player.change_y = -MOVE_SPEED;
-        }
-        else if(keyCode == DOWN){
-            player.change_y = MOVE_SPEED;
-        }
-        else if(key == 'a' && isOnPlatforms(player, platforms)){
-            player.change_y = -JUMP_SPEED;
+
+        if(isGameOver && keyCode == ENTER){
+            settings();
+            setup();
         }
     }
 
