@@ -3,6 +3,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import static org.example.Main.*;
 
+
 public class Player extends AnimatedSprite{
     int lives;
     boolean onPlatform, inPlace;
@@ -27,9 +28,9 @@ public class Player extends AnimatedSprite{
         moveRight[0] = p.loadImage("images/player_walk_right1.png");
         moveRight[1] = p.loadImage("images/player_walk_right2.png");
         jumpLeft = new PImage[1];
-        jumpLeft[0] = p.loadImage("images/player_stand_left.png");
+        jumpLeft[0] = p.loadImage("images/player_jump_left.png");
         jumpRight = new PImage[1];
-        jumpRight[0] = p.loadImage("images/player_stand_right.png");
+        jumpRight[0] = p.loadImage("images/player_jump_right.png");
         currentImages = standRight;
     }
     @Override
@@ -51,9 +52,9 @@ public class Player extends AnimatedSprite{
             if(inPlace){
                 currentImages = standRight;
             }
-//            else if(!onPlatform){
-//                currentImages = jumpRight;
-//            }
+            else if(!onPlatform){
+                currentImages = jumpRight;
+            }
             else
                 currentImages = moveRight;
         }
@@ -62,9 +63,9 @@ public class Player extends AnimatedSprite{
             if(inPlace){
                 currentImages = standLeft;
             }
-//            else if(!onPlatform){
-//                currentImages = jumpLeft;
-//            }
+            else if(!onPlatform){
+                currentImages = jumpLeft;
+            }
             else
                 currentImages = moveLeft;
         }

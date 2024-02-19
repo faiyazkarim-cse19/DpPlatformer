@@ -8,13 +8,13 @@ public class Enemy extends AnimatedSprite{
     public Enemy(PApplet p, PImage img, float scale, float bLeft, float bRight){
         super(p, img, scale);
         moveLeft = new PImage[3];
-        moveLeft[0] = p.loadImage("images/spider_walk_left1.png");
-        moveLeft[1] = p.loadImage("images/spider_walk_left2.png");
-        moveLeft[2] = p.loadImage("images/spider_walk_left3.png");
+        moveLeft[0] = p.loadImage("images/kunai_left1.png");
+        moveLeft[1] = p.loadImage("images/kunai_left2.png");
+        moveLeft[2] = p.loadImage("images/kunai_left3.png");
         moveRight = new PImage[3];
-        moveRight[0] = p.loadImage("images/spider_walk_right1.png");
-        moveRight[1] = p.loadImage("images/spider_walk_right2.png");
-        moveRight[2] = p.loadImage("images/spider_walk_right3.png");
+        moveRight[0] = p.loadImage("images/kunai_right1.png");
+        moveRight[1] = p.loadImage("images/kunai_right2.png");
+        moveRight[2] = p.loadImage("images/kunai_right3.png");
         currentImages = moveRight;
         direction = RIGHT_FACING;
         boundaryLeft = bLeft;

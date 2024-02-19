@@ -26,7 +26,7 @@ public class Main extends PApplet {
 
 
     Player player;
-    PImage snow, crate, red_brick, brown_brick, gold, spider, player_image;
+    PImage grass, crate, red_brick, brown_brick, gold, kunai, player_image, background_image;
     static ArrayList<Sprite> platforms;
     static ArrayList<Sprite> coins;
     static Enemy enemy;
@@ -37,6 +37,8 @@ public class Main extends PApplet {
 
     public void settings(){
         size(800, 600);
+        background_image = loadImage("images/bg.png");
+        background_image.resize(800, 600);
     }
 
     public void setup() {
@@ -52,17 +54,17 @@ public class Main extends PApplet {
         platforms = new ArrayList<>();
         coins = new ArrayList<>();
 
-        spider = loadImage("images/spider_walk_right1.png");
+        kunai = loadImage("images/kunai_right1.png");
         gold = loadImage("images/gold1.png");
         red_brick = loadImage("images/red_brick.png");
         brown_brick = loadImage("images/brown_brick.png");
         crate = loadImage("images/crate.png");
-        snow = loadImage("images/snow.png");
+        grass = loadImage("images/grass.png");
         createPlatforms();
     }
 
     public void draw() {
-        background(255);
+        background(background_image);
         scroll();
         player.display();
         player.updateAnimation();
@@ -111,7 +113,7 @@ public class Main extends PApplet {
                         platforms.add(s);
                     }
                     case "2" -> {
-                        Sprite s = new Sprite(this, snow, SPRITE_SCALE);
+                        Sprite s = new Sprite(this, grass, SPRITE_SCALE);
                         s.center_x = SPRITE_SIZE / 2 + col * SPRITE_SIZE;
                         s.center_y = SPRITE_SIZE / 2 + row * SPRITE_SIZE;
                         platforms.add(s);
@@ -137,7 +139,7 @@ public class Main extends PApplet {
                     case "6" -> {
                         float bLeft = col * SPRITE_SIZE;
                         float bRight = bLeft + 4 * SPRITE_SIZE;
-                        enemy = new Enemy(this, spider, 50/72.0f, bLeft, bRight);
+                        enemy = new Enemy(this, kunai, 50/72.0f, bLeft, bRight);
                         enemy.center_x = SPRITE_SIZE / 2 + col * SPRITE_SIZE;
                         enemy.center_y = SPRITE_SIZE / 2 + row * SPRITE_SIZE;
                     }
