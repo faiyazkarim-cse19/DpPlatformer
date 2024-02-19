@@ -84,8 +84,9 @@ public class Main extends PApplet {
         enemy.update();
         enemy.updateAnimation();
 
-        fill(0, 0, 0);
-        textSize(32);
+        Color color = new BlackColor();
+        Color bigColor = new BigTextColor(color);
+        bigColor.changeColor(this);
         text("Coin: " + num_coins, view_x + 50, view_y + 50);
         text("Lives: " + player.lives, view_x + 50, view_y + 100);
 
@@ -93,7 +94,8 @@ public class Main extends PApplet {
         checkDeath();
 
         if(isGameOver){
-            fill(0, 0, 0);
+            Color whiteColor = new BigTextColor(new WhiteColor());
+            whiteColor.changeColor(this);
             text("Game over!", view_x + (float)width/2 - 100, view_y + (float)height/2);
             if(player.lives == 0)
                 text("You are dead!", view_x + (float)width/2 - 100, view_y + (float)height/2 + 50);
@@ -309,7 +311,6 @@ public class Main extends PApplet {
                else if(bg_toggle == 2){
                     Background bg = bg_factory.chooseBackground("images/bg.png");
                     bg.changeBackground(this);
-                    System.out.println(bg_toggle);
                 }
             }
         }
