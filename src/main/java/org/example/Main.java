@@ -8,7 +8,7 @@ public class Main extends PApplet {
         PApplet.main("org.example.Main");
     }
 
-    final static float MOVE_SPEED = 4;
+    static float MOVE_SPEED = 4;
     final static float GRAVITY = 0.6f;
     final static float JUMP_SPEED = 14;
     final static float SPRITE_SCALE = 50.0f / 128;
@@ -31,6 +31,7 @@ public class Main extends PApplet {
     static ArrayList<Sprite> coins;
     static Enemy enemy;
     int num_coins;
+    static int toggle;
     float view_x;
     float view_y;
     boolean isGameOver;
@@ -48,6 +49,7 @@ public class Main extends PApplet {
         player.setBottom(GROUND_LEVEL);
         player.center_x = 100;
         num_coins = 0;
+        toggle = 1;
         view_x = 0.0f;
         view_y = 0.0f;
         isGameOver = false;
@@ -280,6 +282,22 @@ public class Main extends PApplet {
             }
             else if(key == 'a' && isOnPlatforms(player, platforms)){
                 player.change_y = -JUMP_SPEED;
+            }
+            else if(key == 't'){
+                if(toggle == 1){
+                    Context context = new Context(new NormalMovementStrategy());
+                    context.changeSpeed();
+                }
+                else if(toggle == 2){
+                    Context context = new Context(new SlowMovementStrategy());
+                    context.changeSpeed();
+                    toggle = 3;
+                }
+                else if(toggle == 3){
+                    Context context = new Context(new FastMovementStrategy());
+                    context.changeSpeed();
+                    toggle = 1;
+                }
             }
         }
 
