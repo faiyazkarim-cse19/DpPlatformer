@@ -19,10 +19,17 @@ public class Main extends PApplet {
     final static float RIGHT_MARGIN = 400;
     final static float LEFT_MARGIN = 60;
     final static float VERTICAL_MARGIN = 40;
+    final static int NEUTRAL_FACING = 0;
+    final static int RIGHT_FACING = 1;
+    final static int LEFT_FACING = 2;
+
 
     Sprite player;
-    PImage snow, crate, red_brick, brown_brick;
+    PImage snow, crate, red_brick, brown_brick, gold;
     ArrayList<Sprite> platforms;
+    ArrayList<Sprite> coins;
+    float view_x = 0;
+    float view_y = 0;
 
     public void settings(){
         size(800, 600);
@@ -34,7 +41,9 @@ public class Main extends PApplet {
         player.center_x = 200;
         player.center_y = 50;
         platforms = new ArrayList<>();
+        coins = new ArrayList<>();
 
+        gold = loadImage("images/gold1.png");
         red_brick = loadImage("images/red_brick.png");
         brown_brick = loadImage("images/brown_brick.png");
         crate = loadImage("images/crate.png");
@@ -71,6 +80,12 @@ public class Main extends PApplet {
                         s.center_x = SPRITE_SIZE / 2 + col * SPRITE_SIZE;
                         s.center_y = SPRITE_SIZE / 2 + row * SPRITE_SIZE;
                         platforms.add(s);
+                    }
+                    case "5" -> {
+                        Coin c = new Coin(this, gold, SPRITE_SCALE);
+                        c.center_x = SPRITE_SIZE / 2 + col * SPRITE_SIZE;
+                        c.center_y = SPRITE_SIZE / 2 + row * SPRITE_SIZE;
+                        coins.add(c);
                     }
                 }
             }
@@ -139,11 +154,40 @@ public class Main extends PApplet {
 
     public void draw() {
         background(255);
-
+        scroll();
         player.display();
         resolvePlatformCollisions(player, platforms);
         for(Sprite s: platforms)
             s.display();
+
+        for(Sprite c: coins){
+            c.display();
+            ((AnimatedSprite)c).updateAnimation();
+        }
+    }
+
+    public void scroll(){
+        float right_boundary = view_x + width - RIGHT_MARGIN;
+        if(player.getRight() > right_boundary){
+            view_x += player.getRight() - right_boundary;
+        }
+
+        float left_boundary = view_x + LEFT_MARGIN;
+        if(player.getLeft() < left_boundary){
+            view_x -= left_boundary - player.getLeft();
+        }
+
+        float top_boundary = view_y + VERTICAL_MARGIN;
+        if(player.getTop() < top_boundary){
+            view_y -= top_boundary - player.getTop();
+        }
+
+        float bottom_boundary = view_y + height - VERTICAL_MARGIN;
+        if(player.getBottom() > bottom_boundary){
+            view_y += player.getBottom() - bottom_boundary;
+        }
+
+        translate(-view_x, -view_y);
     }
 
     public void keyPressed(){
