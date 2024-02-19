@@ -20,12 +20,17 @@ public class Main extends PApplet {
     final static int NEUTRAL_FACING = 0;
     final static int RIGHT_FACING = 1;
     final static int LEFT_FACING = 2;
+    final static float WIDTH = SPRITE_SIZE * 16;
+    final static float HEIGHT = SPRITE_SIZE * 12;
+    final static float GROUND_LEVEL = HEIGHT - SPRITE_SIZE;
 
 
     Sprite player;
-    PImage snow, crate, red_brick, brown_brick, gold;
+    PImage snow, crate, red_brick, brown_brick, gold, spider;
     ArrayList<Sprite> platforms;
     ArrayList<Sprite> coins;
+    Enemy enemy;
+    int num_coins;
     float view_x = 0;
     float view_y = 0;
 
@@ -41,6 +46,7 @@ public class Main extends PApplet {
         platforms = new ArrayList<>();
         coins = new ArrayList<>();
 
+        spider = loadImage("images/spider_walk_right1.png");
         gold = loadImage("images/gold1.png");
         red_brick = loadImage("images/red_brick.png");
         brown_brick = loadImage("images/brown_brick.png");
@@ -84,6 +90,13 @@ public class Main extends PApplet {
                         c.center_x = SPRITE_SIZE / 2 + col * SPRITE_SIZE;
                         c.center_y = SPRITE_SIZE / 2 + row * SPRITE_SIZE;
                         coins.add(c);
+                    }
+                    case "6" -> {
+                        float bLeft = col * SPRITE_SIZE;
+                        float bRight = bLeft + 4 * SPRITE_SIZE;
+                        enemy = new Enemy(this, spider, 50/72.0f, bLeft, bRight);
+                        enemy.center_x = SPRITE_SIZE / 2 + col * SPRITE_SIZE;
+                        enemy.center_y = SPRITE_SIZE / 2 + row * SPRITE_SIZE;
                     }
                 }
             }
@@ -162,6 +175,10 @@ public class Main extends PApplet {
             c.display();
             ((AnimatedSprite)c).updateAnimation();
         }
+
+        this.enemy.display();
+        this.enemy.update();
+        this.enemy.updateAnimation();
     }
 
     public void scroll(){
