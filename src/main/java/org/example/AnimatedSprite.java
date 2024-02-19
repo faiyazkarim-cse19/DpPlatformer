@@ -52,7 +52,7 @@ public class AnimatedSprite extends Sprite{
 
     public void advanceToNextImage(){
         index++;
-        if(index == currentImages.length){
+        if(index >= currentImages.length){
             index = 0;
         }
         image = currentImages[index];

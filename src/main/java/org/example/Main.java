@@ -25,11 +25,11 @@ public class Main extends PApplet {
     final static float GROUND_LEVEL = HEIGHT - SPRITE_SIZE;
 
 
-    Sprite player;
-    PImage snow, crate, red_brick, brown_brick, gold, spider;
-    ArrayList<Sprite> platforms;
-    ArrayList<Sprite> coins;
-    Enemy enemy;
+    Player player;
+    PImage snow, crate, red_brick, brown_brick, gold, spider, player_image;
+    static ArrayList<Sprite> platforms;
+    static ArrayList<Sprite> coins;
+    static Enemy enemy;
     int num_coins;
     float view_x = 0;
     float view_y = 0;
@@ -40,9 +40,10 @@ public class Main extends PApplet {
 
     public void setup() {
         imageMode(CENTER);
-        player = new Sprite(this, "images/player.png", 0.8f);
-        player.center_x = 200;
-        player.center_y = 50;
+        player_image = loadImage("images/player.png");
+        player = new Player(this, player_image, 0.8f);
+        player.setBottom(GROUND_LEVEL);
+        player.center_x = 100;
         platforms = new ArrayList<>();
         coins = new ArrayList<>();
 
@@ -139,20 +140,20 @@ public class Main extends PApplet {
 
     }
     
-    public boolean isOnPlatforms(Sprite s, ArrayList<Sprite> walls){
+    public static boolean isOnPlatforms(Sprite s, ArrayList<Sprite> walls){
         s.center_y += 5;
         ArrayList<Sprite> col_list = checkCollisionList(s, walls);
         s.center_y -= 5;
         return  !col_list.isEmpty();
     }
 
-    public boolean checkCollision(Sprite s1, Sprite s2){
+    public static boolean checkCollision(Sprite s1, Sprite s2){
         boolean noXOverlap = s1.getRight() <= s2.getLeft() || s1.getLeft() >= s2.getRight();
         boolean noYOverlap = s1.getBottom() <= s2.getTop() || s1.getTop() >= s2.getBottom();
         return !noXOverlap && !noYOverlap;
     }
 
-    public ArrayList<Sprite> checkCollisionList(Sprite s, ArrayList<Sprite> list){
+    public static ArrayList<Sprite> checkCollisionList(Sprite s, ArrayList<Sprite> list){
         ArrayList<Sprite> collision_list = new ArrayList<>();
 
         for(Sprite p: list){
@@ -167,6 +168,7 @@ public class Main extends PApplet {
         background(255);
         scroll();
         player.display();
+        player.updateAnimation();
         resolvePlatformCollisions(player, platforms);
         for(Sprite s: platforms)
             s.display();
@@ -176,9 +178,9 @@ public class Main extends PApplet {
             ((AnimatedSprite)c).updateAnimation();
         }
 
-        this.enemy.display();
-        this.enemy.update();
-        this.enemy.updateAnimation();
+        enemy.display();
+        enemy.update();
+        enemy.updateAnimation();
     }
 
     public void scroll(){
