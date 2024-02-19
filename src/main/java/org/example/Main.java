@@ -26,12 +26,12 @@ public class Main extends PApplet {
 
 
     Player player;
-    PImage grass, crate, red_brick, brown_brick, gold, kunai, player_image, background_image;
+    static PImage grass, crate, red_brick, brown_brick, gold, kunai, player_image, background_image;
     static ArrayList<Sprite> platforms;
     static ArrayList<Sprite> coins;
     static Enemy enemy;
     int num_coins;
-    static int toggle;
+    static int toggle, bg_toggle;
     float view_x;
     float view_y;
     boolean isGameOver;
@@ -50,6 +50,7 @@ public class Main extends PApplet {
         player.center_x = 100;
         num_coins = 0;
         toggle = 1;
+        bg_toggle = 1;
         view_x = 0.0f;
         view_y = 0.0f;
         isGameOver = false;
@@ -297,6 +298,18 @@ public class Main extends PApplet {
                     Context context = new Context(new FastMovementStrategy());
                     context.changeSpeed();
                     toggle = 1;
+                }
+            }
+            else if(key == 'b'){
+                BackgroundFactory bg_factory = new BackgroundFactory();
+                if(bg_toggle == 1){
+                    Background bg = bg_factory.chooseBackground("images/bg1.png");
+                    bg.changeBackground(this);
+                }
+               else if(bg_toggle == 2){
+                    Background bg = bg_factory.chooseBackground("images/bg.png");
+                    bg.changeBackground(this);
+                    System.out.println(bg_toggle);
                 }
             }
         }
