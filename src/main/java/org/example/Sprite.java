@@ -43,4 +43,29 @@ public class Sprite {
         center_x += change_x;
         center_y += change_y;
     }
+
+    public void setLeft(float left){
+        center_x = left + w/2;
+    }
+    public float getLeft(){
+        return center_x - w/2;
+    }
+    public void setRight(float right){
+        center_x = right - w/2;
+    }
+    public float getRight(){
+        return center_x + w/2;
+    }
+    public void setTop(float top){
+        center_y = top + h/2;
+    }
+    public float getTop(){
+        return center_y - h/2;
+    }
+    public void setBottom(float bottom){
+        center_y = bottom - h/2;
+    }
+    public float getBottom(){
+        return center_y + h/2;
+    }
 }

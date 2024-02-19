@@ -2,6 +2,7 @@ package org.example;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Main extends PApplet {
@@ -9,11 +10,17 @@ public class Main extends PApplet {
         PApplet.main("org.example.Main");
     }
 
-    final static float MOVE_SPEED = 5;
+    final static float MOVE_SPEED = 4;
+    final static float GRAVITY = 0.6f;
+    final static float JUMP_SPEED = 14;
     final static float SPRITE_SCALE = 50.0f / 128;
     final static float SPRITE_SIZE = 50;
 
-    Sprite p;
+    final static float RIGHT_MARGIN = 400;
+    final static float LEFT_MARGIN = 60;
+    final static float VERTICAL_MARGIN = 40;
+
+    Sprite player;
     PImage snow, crate, red_brick, brown_brick;
     ArrayList<Sprite> platforms;
 
@@ -23,10 +30,11 @@ public class Main extends PApplet {
 
     public void setup() {
         imageMode(CENTER);
-        p = new Sprite(this, "images/player.png", 1.0f, 100, 300);
-        p.change_x = 0;
-        p.change_y = 0;
+        player = new Sprite(this, "images/player.png", 0.8f);
+        player.center_x = 200;
+        player.center_y = 50;
         platforms = new ArrayList<>();
+
         red_brick = loadImage("images/red_brick.png");
         brown_brick = loadImage("images/brown_brick.png");
         crate = loadImage("images/crate.png");
@@ -69,43 +77,105 @@ public class Main extends PApplet {
         }
     }
 
+    public void resolvePlatformCollisions(Sprite s, ArrayList<Sprite> walls){
+        s.change_y += GRAVITY;
+        s.center_y += s.change_y;
+        ArrayList<Sprite> col_list = checkCollisionList(s, walls);
+
+        if(!col_list.isEmpty()){
+            Sprite collided = col_list.getFirst();
+
+            if(s.change_y > 0){
+                s.setBottom(collided.getTop());
+            }
+            else if(s.change_y < 0){
+                s.setTop(collided.getBottom());
+            }
+            s.change_y = 0;
+        }
+
+
+        s.center_x += s.change_x;
+        col_list = checkCollisionList(s, walls);
+
+        if(!col_list.isEmpty()){
+            Sprite collided = col_list.getFirst();
+
+            if(s.change_x > 0){
+                s.setRight(collided.getLeft());
+            }
+            else if(s.change_x < 0){
+                s.setLeft(collided.getRight());
+            }
+            s.change_x = 0;
+        }
+
+
+    }
+    
+    public boolean isOnPlatforms(Sprite s, ArrayList<Sprite> walls){
+        s.center_y += 5;
+        ArrayList<Sprite> col_list = checkCollisionList(s, walls);
+        s.center_y -= 5;
+        return  !col_list.isEmpty();
+    }
+
+    public boolean checkCollision(Sprite s1, Sprite s2){
+        boolean noXOverlap = s1.getRight() <= s2.getLeft() || s1.getLeft() >= s2.getRight();
+        boolean noYOverlap = s1.getBottom() <= s2.getTop() || s1.getTop() >= s2.getBottom();
+        return !noXOverlap && !noYOverlap;
+    }
+
+    public ArrayList<Sprite> checkCollisionList(Sprite s, ArrayList<Sprite> list){
+        ArrayList<Sprite> collision_list = new ArrayList<>();
+
+        for(Sprite p: list){
+            if(checkCollision(s, p)){
+                collision_list.add(p);
+            }
+        }
+        return collision_list;
+    }
+
     public void draw() {
         background(255);
-        p.display();
-        p.update();
 
-        for(Sprite s: platforms){
+        player.display();
+        resolvePlatformCollisions(player, platforms);
+        for(Sprite s: platforms)
             s.display();
-        }
     }
 
     public void keyPressed(){
         if(keyCode == RIGHT){
-            p.change_x = MOVE_SPEED;
+            player.change_x = MOVE_SPEED;
         }
         else if(keyCode == LEFT){
-            p.change_x = -MOVE_SPEED;
+            player.change_x = -MOVE_SPEED;
         }
         else if(keyCode == UP){
-            p.change_y = -MOVE_SPEED;
+            player.change_y = -MOVE_SPEED;
         }
         else if(keyCode == DOWN){
-            p.change_y = MOVE_SPEED;
+            player.change_y = MOVE_SPEED;
+        }
+        else if(key == 'a' && isOnPlatforms(player, platforms)){
+            player.change_y = -JUMP_SPEED;
         }
     }
 
     public void keyReleased(){
         if(keyCode == RIGHT){
-            p.change_x = 0;
+            player.change_x = 0;
         }
         else if(keyCode == LEFT){
-            p.change_x = 0;
+            player.change_x = 0;
         }
         else if(keyCode == UP){
-            p.change_y = 0;
+            player.change_y = 0;
         }
         else if(keyCode == DOWN){
-            p.change_y = 0;
+            player.change_y = 0;
         }
     }
 
