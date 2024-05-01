@@ -92,7 +92,7 @@ public class Main extends PApplet {
 
         collectCoins();
         checkDeath();
-
+a
         if(isGameOver){
             Color whiteColor = new BigTextColor(new WhiteColor());
             whiteColor.changeColor(this);
